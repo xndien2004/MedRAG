@@ -1,4 +1,3 @@
-
 import pandas as pd
 import re
 import numpy as np
@@ -12,6 +11,10 @@ from nltk.corpus import stopwords
 import string
 import os
 from collections import defaultdict
+
+from sentence_transformers import SentenceTransformer
+
+model = SentenceTransformer("Qwen/Qwen3-Embedding-0.6B")
 
 nltk.download('punkt')
 nltk.download('stopwords')
@@ -60,22 +63,17 @@ symptom_nodes = kg_data['object_preprocessed'].dropna().unique().tolist()
 
 def get_symptom_embeddings(symptom_nodes, save_path):
     embeddings_path = os.path.join(save_path, 'KG_embeddings.npy')
+    
     if os.path.exists(embeddings_path):
         print("load existing embeddings...")
         return np.load(embeddings_path)
-    else:
-        print("generate new embeddings...")
-        symptom_embeddings = []
-        for symptom in tqdm(symptom_nodes):
-            response = client.embeddings.create(
-                input=symptom,
-                model="text-embedding-3-large"
-            )
-            symptom_embeddings.append(response.data[0].embedding)
-        np.save(embeddings_path, symptom_embeddings)
-
-        return np.array(symptom_embeddings)
-
+    
+    print("generate new embeddings...")
+    symptom_embeddings = model.encode(symptom_nodes, batch_size=32)
+    
+    os.makedirs(save_path, exist_ok=True)
+    np.save(embeddings_path, symptom_embeddings)
+    return symptom_embeddings
 
 symptom_embeddings = get_symptom_embeddings(symptom_nodes, embedding_save_path)
 
@@ -84,11 +82,7 @@ def find_top_n_similar_symptoms(query, symptom_nodes, symptom_embeddings, n):
     if pd.isna(query) or not query:
         return []
     query_preprocessed = preprocess_text(query)
-    response = client.embeddings.create(
-        input=query_preprocessed,
-        model="text-embedding-3-large"
-    )
-    query_embedding = response.data[0].embedding
+    query_embedding = model.encode([query_preprocessed], prompt_name="query")[0]
     if not query_embedding:
         return []
 
