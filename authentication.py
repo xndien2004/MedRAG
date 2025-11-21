@@ -1,7 +1,7 @@
 ob_path='./dataset/df/train'
 test_folder_path="./dataset/df/test"
 ground_truth_file_path='./dataset/AI Data Set with Categories.csv'
-augmented_features_path='./datast/knowledge graph of chronic pain.xlsx'
+augmented_features_path='.dataset/knowledge graph of DDXPlus.xlsx'
 
 
 # Replace with your OpenAI API token
