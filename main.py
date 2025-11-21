@@ -11,6 +11,7 @@ query_embedding = get_query_embedding(query)
 topk = 3
 indices = Faiss(document_embeddings, query_embedding, k=topk)
 retrieved_documents = [documents[i] for i in indices[0]]
+print("retrieved_documents:",retrieved_documents)
 
 final_retrieved_info = []
 for doc_path in retrieved_documents:
