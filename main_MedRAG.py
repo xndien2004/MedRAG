@@ -17,7 +17,7 @@ def get_embeddings(texts):
     return embeddings
 
 def get_query_embedding(query):
-    return get_embeddings([query])[0]
+    return model.encode([query], convert_to_numpy=True, prompt_name="query")[0]
 
 
 # FAISS
