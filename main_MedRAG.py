@@ -8,7 +8,7 @@ from tqdm import tqdm
 from sentence_transformers import SentenceTransformer
 from huggingface_hub import InferenceClient
 from KG_Retrieve import main_get_category_and_level3
-from authentication import api_key,hf_token
+from authentication import hf_token
 
 model = SentenceTransformer("Qwen/Qwen3-Embedding-0.6B")
 
