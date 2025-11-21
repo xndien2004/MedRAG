@@ -1,4 +1,3 @@
-import openai
 import faiss
 import numpy as np
 import os
@@ -6,22 +5,16 @@ import re
 import json
 import pandas as pd
 from tqdm import tqdm
+from sentence_transformers import SentenceTransformer
 from huggingface_hub import InferenceClient
 from KG_Retrieve import main_get_category_and_level3
 from authentication import api_key,hf_token
 
-client = openai.OpenAI(api_key=api_key)
+model = SentenceTransformer("Qwen/Qwen3-Embedding-0.6B")
 
 def get_embeddings(texts):
-    embeddings = []
-    for text in tqdm(texts):
-        response = client.embeddings.create(
-            input=text,
-            model="text-embedding-3-large"
-        )
-        embeddings.append(response.data[0].embedding)
-    return np.array(embeddings)
-
+    embeddings = model.encode(texts, convert_to_numpy=True)
+    return embeddings
 
 def get_query_embedding(query):
     return get_embeddings([query])[0]
@@ -214,7 +207,7 @@ def generate_diagnosis_report(path, query, retrieved_documents, i,top_n,match_n,
             # "meta-llama/Meta-Llama-3.1-70B-Instruct",
             # "meta-llama/Llama-2-13b-hf",
             # "Qwen/Qwen2-7B-Instruct",
-            # "Qwen/Qwen2.5-0.5B-Instruct",
+            "Qwen/Qwen2.5-1.5B-Instruct",
             # "mistralai/Mistral-7B-Instruct-v0.2",
             # 'mistralai/Mixtral-8x7B-Instruct-v0.1',
             token=hf_token
