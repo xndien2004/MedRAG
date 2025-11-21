@@ -188,32 +188,20 @@ def generate_diagnosis_report(path, query, retrieved_documents, i,top_n,match_n,
 
     prompt = f"{query}\nRetrieved Documents: {retrieved_documents}\nInformation from knowledge graph about relevant diagnoses, if you think the patient's disease is relevant from the suggestions provided by the atlas please refer to thoses details to distinguish similar diagnoses : {additional_info} .Now complete the tasks in that format"
 
-
-    ############################################################################################openai
-    if model =='gpt-4o' or 'gpt-4o-mini' or 'gpt-3.5-turbo-0125':
-        response = client.chat.completions.create(
-            model=model,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": prompt}
-            ]
-        )
-        return response.choices[0].message.content
-    else:
-        prompt=f"""<s>[INST] <<SYS>> {system_prompt} <</SYS>> {prompt} [/INST]"""
-        LLMclient = InferenceClient(
-            "meta-llama/Meta-Llama-3.1-8B-Instruct",
-            # "meta-llama/Llama-2-13b-chat-hf",
-            # "meta-llama/Meta-Llama-3.1-70B-Instruct",
-            # "meta-llama/Llama-2-13b-hf",
-            # "Qwen/Qwen2-7B-Instruct",
-            "Qwen/Qwen2.5-1.5B-Instruct",
-            # "mistralai/Mistral-7B-Instruct-v0.2",
-            # 'mistralai/Mixtral-8x7B-Instruct-v0.1',
-            token=hf_token
-        )
-        response = LLMclient.text_generation(prompt=prompt,max_new_tokens=400)
-        return response
+    prompt=f"""<s>[INST] <<SYS>> {system_prompt} <</SYS>> {prompt} [/INST]"""
+    LLMclient = InferenceClient(
+        "meta-llama/Meta-Llama-3.1-8B-Instruct",
+        # "meta-llama/Llama-2-13b-chat-hf",
+        # "meta-llama/Meta-Llama-3.1-70B-Instruct",
+        # "meta-llama/Llama-2-13b-hf",
+        # "Qwen/Qwen2-7B-Instruct",
+        "Qwen/Qwen2.5-1.5B-Instruct",
+        # "mistralai/Mistral-7B-Instruct-v0.2",
+        # 'mistralai/Mixtral-8x7B-Instruct-v0.1',
+        token=hf_token
+    )
+    response = LLMclient.text_generation(prompt=prompt,max_new_tokens=400)
+    return response
 
 def save_results_to_csv(results, output_file):
     df = pd.DataFrame(results,
