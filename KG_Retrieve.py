@@ -1,5 +1,4 @@
 
-import openai
 import pandas as pd
 import re
 import numpy as np
@@ -18,9 +17,8 @@ nltk.download('punkt')
 nltk.download('stopwords')
 
 api_key = ''
-client = openai.OpenAI(api_key=api_key)
 
-KG_file_path = './dataset/knowledge graph of chronic pain.xlsx'
+KG_file_path = './dataset/knowledge graph of DDXPlus.xlsx'
 file_path = './dataset/AI Data Set with Categories.csv'
 embedding_save_path = './Embeddings_saved/CP_KG_embeddings'
 
